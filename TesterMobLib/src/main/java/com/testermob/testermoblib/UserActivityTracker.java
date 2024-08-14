@@ -54,7 +54,7 @@ public class UserActivityTracker {
         activity.setGmail(getGmail());
         activity.setDays(getCurrentDay());
         activity.setHours(getTotalHours());
-        activity.setMinutes(calculateAI(false));
+        activity.setMinutes(getTotalTime());
         activity.setSeconds(getTotalSeconds());
         activity.setInstalled(isAppInstalled());
         activity.setActivity(getActivitiesAsString());
@@ -184,42 +184,37 @@ public class UserActivityTracker {
         return String.valueOf(totalHours);
     }
 
-    public String calculateAI(boolean isStart) {
-
+    public void startTracking() {
         long currentTime = System.currentTimeMillis();
-        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(currentTime));
-
-        String savedDate = preferences.getString("saved_date", currentDate);
-
-        if (isStart) {
-
-            preferences.edit().putLong("start_time", currentTime).apply();
-            preferences.edit().putString("saved_date", currentDate).apply();
-            return "Your work started";
-        } else {
-
-            if (!currentDate.equals(savedDate)) {
-                preferences.edit().putLong("total_time", 0).apply();
-                preferences.edit().putString("saved_date", currentDate).apply();
-            }
-
-            long startTime = preferences.getLong("start_time", currentTime);
-            long elapsedTime = currentTime - startTime;
-
-            long totalTime = preferences.getLong("total_time", 0);
-            totalTime += elapsedTime;
-
-            preferences.edit().putLong("total_time", totalTime).apply();
-
-            long seconds = totalTime / 1000;
-            long hours = seconds / 3600;
-            seconds %= 3600;
-            long minutes = seconds / 60;
-            seconds %= 60;
-
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        }
+        preferences.edit().putLong("start_time", currentTime).apply();
+        preferences.edit().putString("saved_date", getCurrentDate()).apply();
     }
+
+    public void stopTracking() {
+        long currentTime = System.currentTimeMillis();
+        long startTime = preferences.getLong("start_time", currentTime);
+        long elapsedTime = currentTime - startTime;
+
+        long totalTime = preferences.getLong("total_time", 0L);
+        totalTime += elapsedTime;
+
+        preferences.edit().putLong("total_time", totalTime).apply();
+    }
+
+    public String getTotalTime() {
+        long totalTime = preferences.getLong("total_time", 0L);
+        long seconds = totalTime / 1000L;
+        long hours = seconds / 3600L;
+        seconds %= 3600L;
+        long minutes = seconds / 60L;
+        seconds %= 60L;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    private String getCurrentDate() {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+    }
+
 
     private String getTotalSeconds() {
 
