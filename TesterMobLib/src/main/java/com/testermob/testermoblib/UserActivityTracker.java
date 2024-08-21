@@ -185,9 +185,17 @@ public class UserActivityTracker {
     }
 
     public void startTracking() {
+        String currentDate = getCurrentDate();
+        String savedDate = preferences.getString("saved_date", currentDate);
+
+        if (!currentDate.equals(savedDate)) {
+
+            preferences.edit().putLong("total_time", 0L).apply();
+        }
+
         long currentTime = System.currentTimeMillis();
         preferences.edit().putLong("start_time", currentTime).apply();
-        preferences.edit().putString("saved_date", getCurrentDate()).apply();
+        preferences.edit().putString("saved_date", currentDate).apply();
     }
 
     public void stopTracking() {
@@ -214,7 +222,6 @@ public class UserActivityTracker {
     private String getCurrentDate() {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
     }
-
 
     private String getTotalSeconds() {
 
