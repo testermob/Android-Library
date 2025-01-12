@@ -34,13 +34,16 @@ implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
 
-### AndroidManifest Permissions
-Before using the TesterMob library, you need to add the necessary permissions in your AndroidManifest.xml file.
+## AndroidManifest Permissions
 
-In your AndroidManifest.xml file, add the following permissions:
+Before using the TesterMob library, you need to add the necessary permissions in your `AndroidManifest.xml` file.
 
+In your `AndroidManifest.xml` file, add the following permissions:
+
+```xml
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
 
 
 ### Main Activity Integration
